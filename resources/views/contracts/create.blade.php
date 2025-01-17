@@ -88,7 +88,7 @@
 
         <script>
             function formatAgreementNumber(input) {
-                // Automatically add '/' after first 2 characters
+
                 let value = input.value.replace('/', ''); // Remove existing slash
                 if (value.length > 2) {
                     input.value = value.slice(0, 2) + '/' + value.slice(2);

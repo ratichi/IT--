@@ -11,10 +11,10 @@ class Contract extends Model
 {
     use HasFactory;
 
-    // Specify the table name if it's not the plural form of the model name
+
     protected $table = 'contracts';
 
-    // Specify the fillable columns
+
     protected $fillable = [
         'type',
         'contract_name',
@@ -41,30 +41,26 @@ class Contract extends Model
     {
 
         try {
-            // Log the guarantee_time to verify the format
-            \Log::info('guarantee_time: ' . $this->guarantee_time);
+
         
-            // Parse the guarantee time correctly
+
             $guaranteeDate = Carbon::createFromFormat('Y/m', $this->guarantee_time);
-            \Log::info('Parsed guarantee_date: ' . $guaranteeDate->toDateString());
         
-            // Get the current date and log it
+
             $currentDate = Carbon::now();
-            \Log::info('Current date: ' . $currentDate->toDateString());
         
-            // Check if the guarantee time has passed by comparing to the start of the current month
+
             if ($guaranteeDate->isBefore($currentDate->startOfMonth())) {
                 return 'Expired';
             }
         
-            // Calculate the difference in months
+
             $remainingMonths = $guaranteeDate->diffInMonths($currentDate);
             $remainingMonths = round($remainingMonths);
         
-            // Return the remaining months
+
             return "$remainingMonths month" . ($remainingMonths > 1 ? 's' : '') . " left";
         } catch (\Throwable $e) {
-            \Log::error('Error in getGuaranteeRemainingAttribute: ' . $e->getMessage());
             return 'Error calculating guarantee time';
         }
         
@@ -81,25 +77,24 @@ class Contract extends Model
 }
 
     
-    // In your Contract model
+
 public function getReceivingTermRemainingAttribute()
 {
     try {
         $receivingTermDate = Carbon::parse($this->receiving_term);  // Parse the receiving term
         $currentDate = Carbon::now();  // Get the current date
 
-        // Calculate the difference in months
+
         $remainingMonths = $receivingTermDate->diffInMonths($currentDate);
 
-        // Check if the receiving term has passed and handle accordingly
+
         if ($receivingTermDate->isPast()) {
             return 'Expired';
         }
 
-        // Return the remaining months
+
         return "$remainingMonths month" . ($remainingMonths > 1 ? 's' : '') . " left";
     } catch (\Throwable $e) {
-        \Log::error('Error in getReceivingTermRemainingAttribute: ' . $e->getMessage());
         return 'Error calculating receiving term';
     }
 }

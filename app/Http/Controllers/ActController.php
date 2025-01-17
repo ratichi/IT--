@@ -28,7 +28,7 @@ class ActController extends Controller
     }
         public function index(Contract $contract)
     {
-        // Retrieve all acts related to this contract
+
         $acts = $contract->acts; // This assumes your Contract model has a relationship defined as 'acts'
         
         return view('acts.index', compact('contract', 'acts'));

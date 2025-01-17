@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class ContractController extends Controller
 {
-    // Show the form
+
     
     public function create()
     {
@@ -18,13 +18,13 @@ class ContractController extends Controller
 
     
 
-    // Handle the form submission
+
     public function index(Request $request)
     {
-        // Initialize the query
+
         $query = Contract::query();
     
-        // Apply filters if search fields are provided
+
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
@@ -44,19 +44,18 @@ class ContractController extends Controller
             $query->where('funding_code', 'like', '%' . $request->funding_code . '%');
         }
     
-        // Retrieve the filtered contracts
+
         $contracts = $query->get();
     
-        // Process each contract
+
         foreach ($contracts as $contract) {
             try {
-                // Add used quantity and ratio
+
                 $contract->used_quantity = $contract->usedQuantity();
                 $contract->quantity_ratio = $contract->used_quantity . '/' . $contract->quantity; 
                 
-                \Log::info('receiving_term: ' . $contract->recive_term);
     
-                // Trim spaces to avoid parsing issues
+
                 $contract->recive_term = trim($contract->recive_term);
     
                 if (!empty($contract->guarantee_time)) {
@@ -64,19 +63,18 @@ class ContractController extends Controller
     
                     if (!empty($contract->recive_term)) {
     
-                        // Parse the receiving_term with yyyy-mm-dd format
+
                         $receivingTerm = \Carbon\Carbon::createFromFormat('Y-m-d', $contract->recive_term);
-                        \Log::info('Parsed receivingTerm: ' . $receivingTerm);
     
                         $currentDate = \Carbon\Carbon::now();
                 
                         if ($receivingTerm->isBefore($currentDate)) {
                             $contract->remaining_receiving_term = 'Expired';
                         } else {
-                            // Calculate the difference in months
+
                             $remainingMonths = $currentDate->diffInMonths($receivingTerm);
     
-                            // If the remaining months are 0, check the days difference
+
                             if ($remainingMonths == 0) {
                                 $daysRemaining = $currentDate->diffInDays($receivingTerm);
                                 if ($daysRemaining >= 20) { // Adjust the threshold if needed
@@ -84,17 +82,17 @@ class ContractController extends Controller
                                 }
                             }
     
-                            // Round up the remaining months (if necessary)
+
                             $remainingMonths = ceil($remainingMonths);
     
-                            // Append "month(s)"
+
                             $contract->remaining_receiving_term = $remainingMonths . ' თვე' ;
                         }
                     } else {
                         $contract->remaining_receiving_term = 'Invalid or Missing receiving term';
                     }
     
-                    // Guarantee time calculations
+
                     if ($guaranteeDate->isPast()) {
                         $contract->remaining_time = 'Expired';
                     } else {
@@ -106,12 +104,11 @@ class ContractController extends Controller
                     $contract->remaining_time = 'Invalid or Missing guarantee time';
                 }
             } catch (\Exception $e) {
-                \Log::error('Error in parsing receiving_term or guarantee_time: ' . $e->getMessage());
                 $contract->remaining_time = 'Error calculating time';
             }
         }
     
-        // Pass the filtered contracts to the view
+
         return view('contracts.index', compact('contracts'));
     }
     
@@ -137,7 +134,7 @@ class ContractController extends Controller
             'status' => $request->input('status'),
         ]);
     
-        return redirect()->route('contracts.index')->with('success', 'Contract status updated successfully!');
+        return redirect()->route('contracts.index')->with('success', 'ხელშეკრულების სტატუსი შეიცვალა');
     }
     
     
@@ -164,10 +161,10 @@ class ContractController extends Controller
             'guarantee_time' => 'required|regex:/^\d{4}\/\d{2}$/',
         ]);
 
-        // Create a new contract
+
         $contract = Contract::create($validatedData);
     
-        // Redirect or return a response
+
         return redirect()->route('contracts.index');
     }
 }
