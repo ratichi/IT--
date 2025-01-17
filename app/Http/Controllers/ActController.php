@@ -24,7 +24,7 @@ class ActController extends Controller
 
         $contract->acts()->create($request->all());
 
-        return redirect()->route('contracts.index')->with('success', 'Act added successfully!');
+        return redirect()->route('contracts.index')->with('success', 'აქტი დაემატა');
     }
         public function index(Contract $contract)
     {
