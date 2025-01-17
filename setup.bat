@@ -29,26 +29,56 @@ findstr /C:"DB_PASSWORD" .env >nul || (
 REM Step 5: Install Composer dependencies
 echo Installing Composer dependencies...
 composer install
+IF %ERRORLEVEL% NEQ 0 (
+    echo Composer installation failed! Please ensure Composer is installed.
+    pause
+    exit /b
+)
 
 REM Step 6: Generate the Laravel application key
 echo Generating application key...
 php artisan key:generate
+IF %ERRORLEVEL% NEQ 0 (
+    echo Failed to generate application key. Please ensure PHP and Laravel are installed properly.
+    pause
+    exit /b
+)
 
 REM Step 7: Run database migrations
 echo Running database migrations...
 php artisan migrate
+IF %ERRORLEVEL% NEQ 0 (
+    echo Migration failed. Please check the database connection and configuration.
+    pause
+    exit /b
+)
 
 REM Step 8: (Optional) Seed the database with sample data
 echo Seeding the database...
 php artisan db:seed
+IF %ERRORLEVEL% NEQ 0 (
+    echo Seeding failed. Please check your database setup.
+    pause
+    exit /b
+)
 
 REM Step 9: Create a symbolic link for storage
 echo Creating storage link...
 php artisan storage:link
+IF %ERRORLEVEL% NEQ 0 (
+    echo Storage link creation failed. Please check your Laravel setup.
+    pause
+    exit /b
+)
 
 REM Step 10: Run Laravel's development server
 echo Starting Laravel server...
 php artisan serve
+IF %ERRORLEVEL% NEQ 0 (
+    echo Failed to start Laravel server. Please ensure your PHP setup is correct.
+    pause
+    exit /b
+)
 
 REM Final message
 echo Setup completed! You can now run the application using 'php artisan serve'.
