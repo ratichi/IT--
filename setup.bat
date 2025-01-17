@@ -1,3 +1,3 @@
 copy .env.example .env
-composer install
+composer install --no-dev --optimize-autoloader
 php artisan key:generate
