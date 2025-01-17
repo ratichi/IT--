@@ -35,6 +35,12 @@ if %errorlevel% neq 0 (
 
 call mysql -u root -e "CREATE DATABASE IF NOT EXISTS it_project;"
 
+
+call php artisan migrate --force
+
+
+call php artisan session:table
+
 call php artisan migrate --force
 
 :: Start the Laravel development server
