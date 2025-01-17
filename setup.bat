@@ -1,6 +1,17 @@
 @echo off
 
-REM Step 1: Install Composer dependencies
+REM Step 1: Create the .env file from .env.example if it doesn't exist
+IF NOT EXIST .env (
+    echo Creating .env file from .env.example...
+    copy .env.example .env
+    IF %ERRORLEVEL% NEQ 0 (
+        echo Failed to create .env file. Ensure the .env.example file exists.
+        pause
+        exit /b
+    )
+)
+
+REM Step 2: Install Composer dependencies
 echo Installing Composer dependencies...
 composer install
 IF %ERRORLEVEL% NEQ 0 (
@@ -9,7 +20,7 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-REM Step 2: Generate the Laravel application key
+REM Step 3: Generate the Laravel application key
 echo Generating application key...
 php artisan key:generate
 IF %ERRORLEVEL% NEQ 0 (
@@ -18,7 +29,7 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-REM Step 3: Run database migrations
+REM Step 4: Run database migrations
 echo Running database migrations...
 php artisan migrate
 IF %ERRORLEVEL% NEQ 0 (
@@ -27,7 +38,7 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-REM Step 4: Start the Laravel development server
+REM Step 5: Start the Laravel development server
 echo Starting Laravel server...
 php artisan serve
 IF %ERRORLEVEL% NEQ 0 (
